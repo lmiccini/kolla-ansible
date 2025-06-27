@@ -34,6 +34,17 @@
     mode: "0660"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
 
+- name: Generating 'hostnqn' file for nova_fake
+  vars:
+    hostnqn: "nqn.2014-08.org.nvmexpress:uuid:{{ ('nova-compute-fake-' + {{ item }}) | to_uuid }}"
+    service: "{{ nova_cell_services['nova-compute'] }}"
+  template:
+    src: "templates/hostnqn.j2"
+    dest: "{{ node_config_directory }}/nova-computefake-{{ item }}/hostnqn"
+    mode: "0660"
+  become: true
+  with_sequence: start=1 end={{ num_nova_fake_per_node }}
+
 - name: Ensuring config directory has correct owner and permission
   become: true
   file:
